@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>よんもじ</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style type="text/css">
+      .form-inline input[type='color'].form-control{
+        width: 6em;
+      }
+    </style>
+  </head>
+  <body id='index_page'>
+    <div id='wrapper' class="container">
+      <div class="col-md-12">
+        <canvas id="canvas" width="128" height="128"></canvas>
+      </div>
+      <div class="col-md-12">
+        <form id='form' class='form-inline'>
+          <div class="form-group">
+            <label for="input_text">四文字</label>
+            <input type='text' id='input_text' value='よんもじ' class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label for="input_font">フォント</label>
+            <input type='text' id='input_font' value='sans-serif' class="form-control"/>
+          </div>
+          <div class="form-group">
+            <label for="input_color">文字色</label>
+            <input type='color' id='input_color' value='#1111dd' class="form-control"/>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-12">
+        <a href='https://github.com/mogya/yonmoji' target='_blank'>mogya/yonmoji Github</a>
+      </div>
+    </div>
+    <div id="script">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script src="https://raw.githubusercontent.com/antimatter15/jsgif/master/GIFEncoder.js"></script>
+      <script type="text/javascript">
+        (function () {
+          var canvas2d = document.getElementById('canvas').getContext('2d');
+
+          var onChange = function () {
+            draw($('#input_text').val(), 'bold 64px ' + $('#input_font').val(), $('#input_color').val());
+            save();
+          };
+
+          var draw = function (str, font, color) {
+            var strLeng = str.length;
+            console.log(strLeng);
+
+
+            canvas2d.font = font;
+            canvas2d.fillStyle = color;
+            canvas2d.clearRect(0, 0, 128, 128);
+            if (strLeng == 2) {
+              canvas2d.fillText(str.charAt(0), 32, 54, 64);
+              canvas2d.fillText(str.charAt(1), 32, 118, 64);
+            } else {
+              canvas2d.fillText(str.charAt(0), 2, 58, 64);
+              canvas2d.fillText(str.charAt(1), 62, 58, 64);
+              canvas2d.fillText(str.charAt(2), 2, 122, 64);
+              canvas2d.fillText(str.charAt(3), 62, 122, 64);
+            }
+          };
+
+          var load = function () {
+            $.each(['text', 'font', 'color'], function (index, key) {
+              var val = urlParams(key);
+              if (val) {
+                $('#input_' + key).val(val);
+              }
+            });
+          };
+
+          var save = function () {
+            var search = '?';
+            $.each(['text', 'font', 'color'], function (index, key) {
+              var val = $('#input_' + key).val();
+              search = search + '&' + key + '=' + encodeURIComponent(val);
+            });
+            history.replaceState('', null, search.replace('?&', '?'));
+          };
+
+          var urlParams = function (key) {
+            var ret = undefined;
+            var match = location.search.match(new RegExp(key + '=(.*?)(&|$)'));
+            if (match) {
+              ret = decodeURIComponent(match[1]);
+            }
+            return ret;
+          };
+
+          $(function () {
+            $('input').on('keyup change', onChange);
+            load();
+            onChange();
+          });
+        })();
+      </script>
+    </div>
+  </body>
+</html>
